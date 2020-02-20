@@ -1,0 +1,196 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def bisulfiteConvert(original_sequence):\n",
+    "    converted_sequence = ''\n",
+    "    for e in original_sequence:\n",
+    "        if e=='C':\n",
+    "            converted_sequence+='T'\n",
+    "        elif e=='c':\n",
+    "            converted_sequence+='t' # if the input sequence is in smaller case\n",
+    "        else:\n",
+    "            converted_sequence+=e           \n",
+    "    return converted_sequence"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 156,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'ATTGGGTTATTGTGTTAGATT'"
+      ]
+     },
+     "execution_count": 156,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "str(bisulfiteConvert('ACTGGGCTATCGCGTTAGACT'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 157,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def callWgbsBases(ref_seq,reads): # ref seq is a string, reads is an array of strings\n",
+    "    index = [] # to get the positions\n",
+    "    for i in range(0,len(ref_seq)):\n",
+    "        if ref_seq[i]=='C':\n",
+    "            index.append(str(i))\n",
+    "        elif ref_seq[i]=='T':\n",
+    "            index.append(i)\n",
+    "    \n",
+    "    \n",
+    "    for ind in index: # iterating for every T and C from the original sequence\n",
+    "        met_c = 0\n",
+    "        t = 0\n",
+    "        \n",
+    "        if type(ind)==str: # checking if the index is corresponding to C\n",
+    "            for j in range(0,len(reads)): # iterating for all the sequences to be read            \n",
+    "                if reads[j][int(ind)]=='C':\n",
+    "                    met_c+=1\n",
+    "            if met_c>=int(np.ceil((len(reads)+1)/2)):\n",
+    "                print(str(int(ind)+1)+': methylated C')\n",
+    "            else:\n",
+    "                print(str(int(ind)+1)+': unmethylated C')\n",
+    "                \n",
+    "        elif type(ind)==int: # checking if the index is corresponding to T\n",
+    "            for j in range(0,len(reads)):\n",
+    "                if reads[j][ind]=='T':\n",
+    "                    t+=1\n",
+    "            if t>=int(np.ceil((len(reads)+1)/2)):\n",
+    "                print(str(ind+1)+': true T')\n",
+    "            else:\n",
+    "                print(str(ind+1)+': mutated T')\n",
+    "            \n",
+    "                \n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 173,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import pandas\n",
+    "os.chdir('/Users/sreelakshmirajendrakumar/Downloads')\n",
+    "ref_sequence = open('ref_seq.txt','r')\n",
+    "ref_seq = '' # to store the reference sequence\n",
+    "for base in ref_sequence:\n",
+    "    ref_seq+=base\n",
+    "reads = pandas.read_csv('reads.txt')\n",
+    "first_seq=list(reads.columns.values) # because the first sequence is regarded as heading by pandas\n",
+    "read_seqs = [first_seq[0]] # the array that stores all the sequences to be read\n",
+    "for i in range(0,len(reads.iloc[:,0])):\n",
+    "    read_seqs.append(reads.iloc[:,0][i])\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 174,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2: unmethylated C\n",
+      "3: true T\n",
+      "4: true T\n",
+      "5: unmethylated C\n",
+      "6: unmethylated C\n",
+      "7: unmethylated C\n",
+      "11: unmethylated C\n",
+      "12: methylated C\n",
+      "15: unmethylated C\n",
+      "16: methylated C\n",
+      "20: unmethylated C\n",
+      "21: true T\n",
+      "24: methylated C\n",
+      "26: unmethylated C\n",
+      "27: unmethylated C\n",
+      "30: methylated C\n",
+      "34: true T\n",
+      "36: true T\n",
+      "38: true T\n",
+      "39: unmethylated C\n",
+      "40: unmethylated C\n",
+      "41: true T\n",
+      "42: true T\n",
+      "43: unmethylated C\n",
+      "44: unmethylated C\n",
+      "45: unmethylated C\n",
+      "46: unmethylated C\n",
+      "49: unmethylated C\n",
+      "58: true T\n",
+      "62: unmethylated C\n",
+      "64: unmethylated C\n",
+      "69: true T\n",
+      "70: unmethylated C\n",
+      "73: methylated C\n",
+      "75: unmethylated C\n",
+      "76: unmethylated C\n",
+      "77: true T\n",
+      "78: methylated C\n",
+      "80: true T\n",
+      "81: unmethylated C\n",
+      "82: true T\n",
+      "84: methylated C\n",
+      "87: methylated C\n",
+      "89: unmethylated C\n",
+      "90: unmethylated C\n",
+      "91: unmethylated C\n",
+      "92: true T\n"
+     ]
+    }
+   ],
+   "source": [
+    "callWgbsBases(ref_seq,read_seqs)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
